@@ -34,7 +34,9 @@ class _PrintingScreenState extends State<PrintingScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        // backgroundColor: Colors.amber,
         appBar: AppBar(
+            backgroundColor: Colors.black,
             // automaticallyImplyLeading: false,
             leading: GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -56,17 +58,190 @@ class _PrintingScreenState extends State<PrintingScreen> {
         pageFormat: PdfPageFormat.roll80,
         build: (context) {
           return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
               pw.Text(
-                'Customer Bill',
-                style: pw.TextStyle(fontSize: 10),
+                'PAK JINNAH SWEETS & REST',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  //  font: font, fontWeight: pw.FontWeight.bold
+                ),
+              ),
+              pw.SizedBox(height: 5),
+              pw.Text(
+                'Binary Tower, Shop G-12, DUBAI',
+                style: pw.TextStyle(
+                  fontSize: 4,
+                ),
               ),
 
-              for (var item in widget.selecteditems)
-                pw.Text(
-                  item.name!,
-                  style: pw.TextStyle(fontSize: 6),
+              pw.Text(
+                'TEL: 04-589 4589',
+                style: pw.TextStyle(
+                  fontSize: 4,
                 ),
+              ),
+              pw.Text(
+                'Mobile: 055-8144018 whatsapp',
+                style: pw.TextStyle(
+                  fontSize: 4,
+                ),
+              ),
+              pw.Text(
+                'Email: pakjinnahbussinessbay@gmail.com',
+                style: pw.TextStyle(
+                  fontSize: 4,
+                ),
+              ),
+              pw.Text(
+                'Website: www.pakjinnah.com',
+                style: pw.TextStyle(
+                  fontSize: 4,
+                ),
+              ),
+              pw.Text(
+                'TRN: 100575280100003',
+                style: pw.TextStyle(
+                  fontSize: 4,
+                ),
+              ),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  // crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Column(children: [
+                      pw.Text(
+                          'Date ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                          style: pw.TextStyle(fontSize: 4)),
+                      pw.Text(
+                          'Time ${DateTime.now().hour}:${DateTime.now().minute}::${DateTime.now().second}',
+                          style: pw.TextStyle(fontSize: 4)),
+                    ])
+                  ]),
+
+              pw.Divider(),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text('Item Name',
+                          style: pw.TextStyle(fontSize: 5)),
+                    ),
+                    pw.Expanded(
+                      child: pw.Text('Price',
+                          style: pw.TextStyle(fontSize: 5),
+                          textAlign: pw.TextAlign.center),
+                    ),
+                    pw.Expanded(
+                      child: pw.Text('Qty',
+                          style: pw.TextStyle(fontSize: 5),
+                          textAlign: pw.TextAlign.center),
+                    ),
+                    pw.Expanded(
+                      child: pw.Text('AMT',
+                          style: pw.TextStyle(fontSize: 5),
+                          textAlign: pw.TextAlign.center),
+                    ),
+                  ]),
+
+              pw.Divider(),
+
+              for (var item in widget.selecteditems)
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.start,
+                    children: [
+                      pw.Expanded(
+                        flex: 2,
+                        child: pw.Text(item.name!,
+                            style: pw.TextStyle(fontSize: 5)),
+                      ),
+                      pw.Expanded(
+                        child: pw.Text('Price',
+                            style: pw.TextStyle(fontSize: 5),
+                            textAlign: pw.TextAlign.center),
+                      ),
+                      pw.Expanded(
+                        child: pw.Text('Qty',
+                            style: pw.TextStyle(fontSize: 5),
+                            textAlign: pw.TextAlign.center),
+                      ),
+                      pw.Expanded(
+                        child: pw.Text('AMT',
+                            style: pw.TextStyle(fontSize: 5),
+                            textAlign: pw.TextAlign.center),
+                      ),
+                    ]),
+
+              pw.Divider(),
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'Total Amount',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                    pw.Text(
+                      '60.95',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                  ]),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'VAT 5.00%',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                    pw.Text(
+                      '3.05',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                  ]),
+
+              pw.Divider(),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'Total with Tax',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                    pw.Text(
+                      '3.05',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                  ]),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'Cash Received',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                    pw.Text(
+                      '3.05',
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                  ]),
+
+              pw.SizedBox(height: 10),
+
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('No. of Items: 4',
+                        style: pw.TextStyle(fontSize: 8)),
+                  ]),
+
+              pw.Divider(),
+              pw.Text('THANK YOU FOR VISITING',
+                  style: pw.TextStyle(fontSize: 8)),
 
               // pw.SizedBox(
               //   width: double.infinity,
@@ -76,7 +251,6 @@ class _PrintingScreenState extends State<PrintingScreen> {
               //   ),
               // ),
 
-              pw.SizedBox(height: 10),
               // pw.Flexible(child: pw.FlutterLogo())
             ],
           );
