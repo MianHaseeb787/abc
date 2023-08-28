@@ -13,9 +13,25 @@ import 'package:rms/generateBill_Screen.dart';
 import 'Hive/menu.dart';
 
 class PrintingScreen extends StatefulWidget {
-  PrintingScreen(this.selecteditems, {Key? key}) : super(key: key);
+  PrintingScreen(
+      {super.key,
+      required this.selecteditems,
+      required this.amtList,
+      required this.quantityList,
+      required this.totalAmountList,
+      required this.eachItemPriceList,
+      required this.vatList,
+      required this.totalAmountWT,
+      required this.vat});
 
   List<Menu> selecteditems;
+  List<double> amtList;
+  List<int> quantityList;
+  List<double> totalAmountList;
+  List<double> vatList;
+  List<double> eachItemPriceList;
+  double totalAmountWT;
+  double vat;
 
   @override
   State<PrintingScreen> createState() => _PrintingScreenState();
@@ -28,6 +44,10 @@ class _PrintingScreenState extends State<PrintingScreen> {
     super.initState();
 
     // print(selectedItems);
+
+    for (int i = 0; i < widget.selecteditems.length; i++) {
+      print(" amt $i ${widget.selecteditems[i].name}");
+    }
   }
 
   @override
@@ -43,6 +63,9 @@ class _PrintingScreenState extends State<PrintingScreen> {
                 child: Icon(Icons.arrow_back)),
             title: Text('Customer Bill')),
         body: PdfPreview(
+          // pdfPreviewPageDecoration: BoxDecoration(color: Colors.amber),
+          previewPageMargin:
+              EdgeInsets.symmetric(horizontal: 400, vertical: 50),
           build: (format) => _generatePdf('customer bill'),
         ),
       ),
@@ -52,6 +75,11 @@ class _PrintingScreenState extends State<PrintingScreen> {
   Future<Uint8List> _generatePdf(String title) async {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     final font = await PdfGoogleFonts.nunitoExtraLight();
+
+    int count = 0;
+    for (int i = 0; i < widget.selecteditems.length; i++) {
+      count++;
+    }
 
     pdf.addPage(
       pw.Page(
@@ -131,12 +159,12 @@ class _PrintingScreenState extends State<PrintingScreen> {
                           style: pw.TextStyle(fontSize: 5)),
                     ),
                     pw.Expanded(
-                      child: pw.Text('Price',
+                      child: pw.Text('Qty',
                           style: pw.TextStyle(fontSize: 5),
                           textAlign: pw.TextAlign.center),
                     ),
                     pw.Expanded(
-                      child: pw.Text('Qty',
+                      child: pw.Text('Price',
                           style: pw.TextStyle(fontSize: 5),
                           textAlign: pw.TextAlign.center),
                     ),
@@ -149,27 +177,31 @@ class _PrintingScreenState extends State<PrintingScreen> {
 
               pw.Divider(),
 
-              for (var item in widget.selecteditems)
+              for (int i = 0; i < widget.selecteditems.length; i++)
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.start,
                     children: [
                       pw.Expanded(
                         flex: 2,
-                        child: pw.Text(item.name!,
+                        child: pw.Text(widget.selecteditems[i].name!,
                             style: pw.TextStyle(fontSize: 5)),
                       ),
                       pw.Expanded(
-                        child: pw.Text('Price',
+                        child: pw.Text(widget.quantityList[i].toString(),
                             style: pw.TextStyle(fontSize: 5),
                             textAlign: pw.TextAlign.center),
                       ),
                       pw.Expanded(
-                        child: pw.Text('Qty',
+                        child: pw.Text(
+                            (widget.eachItemPriceList[i]).toStringAsFixed(2),
                             style: pw.TextStyle(fontSize: 5),
                             textAlign: pw.TextAlign.center),
                       ),
                       pw.Expanded(
-                        child: pw.Text('AMT',
+                        child: pw.Text(
+                            (widget.eachItemPriceList[i] *
+                                    (widget.quantityList[i]))
+                                .toStringAsFixed(2),
                             style: pw.TextStyle(fontSize: 5),
                             textAlign: pw.TextAlign.center),
                       ),
@@ -184,7 +216,7 @@ class _PrintingScreenState extends State<PrintingScreen> {
                       style: pw.TextStyle(fontSize: 5),
                     ),
                     pw.Text(
-                      '60.95',
+                      ((widget.totalAmountWT) / (1 + 0.05)).toStringAsFixed(2),
                       style: pw.TextStyle(fontSize: 5),
                     ),
                   ]),
@@ -197,7 +229,9 @@ class _PrintingScreenState extends State<PrintingScreen> {
                       style: pw.TextStyle(fontSize: 5),
                     ),
                     pw.Text(
-                      '3.05',
+                      (widget.totalAmountWT -
+                              ((widget.totalAmountWT) / (1 + 0.05)))
+                          .toStringAsFixed(2),
                       style: pw.TextStyle(fontSize: 5),
                     ),
                   ]),
@@ -212,7 +246,7 @@ class _PrintingScreenState extends State<PrintingScreen> {
                       style: pw.TextStyle(fontSize: 5),
                     ),
                     pw.Text(
-                      '3.05',
+                      (widget.totalAmountWT).toStringAsFixed(2),
                       style: pw.TextStyle(fontSize: 5),
                     ),
                   ]),
@@ -225,7 +259,7 @@ class _PrintingScreenState extends State<PrintingScreen> {
                       style: pw.TextStyle(fontSize: 5),
                     ),
                     pw.Text(
-                      '3.05',
+                      (widget.totalAmountWT).toStringAsFixed(2),
                       style: pw.TextStyle(fontSize: 5),
                     ),
                   ]),
@@ -235,7 +269,7 @@ class _PrintingScreenState extends State<PrintingScreen> {
               pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
-                    pw.Text('No. of Items: 4',
+                    pw.Text('No. of Items: ${count}',
                         style: pw.TextStyle(fontSize: 8)),
                   ]),
 

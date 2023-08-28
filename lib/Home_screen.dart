@@ -767,7 +767,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MyApp()),
+                        MaterialPageRoute(
+                            builder: (context) => EmployeeScreen()),
                       );
                     },
                     child: Padding(
@@ -819,7 +820,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: SizedBox(
         width: 200,
         child: FloatingActionButton(
-            backgroundColor: Colors.blue,
+            backgroundColor: Color.fromARGB(255, 0, 0, 0),
             isExtended: true,
             // mouseCursor: Icons(Icons.add),
             shape: RoundedRectangleBorder(
@@ -830,11 +831,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Settings'),
+                Text(
+                  'Settings',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
                 SizedBox(
                   width: 20,
                 ),
-                Icon(Icons.settings),
+                Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
               ],
             )),
       ),

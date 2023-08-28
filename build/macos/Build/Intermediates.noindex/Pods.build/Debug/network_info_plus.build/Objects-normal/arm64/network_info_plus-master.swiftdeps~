@@ -1,0 +1,6 @@
+version: "Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)"
+options: "394676442fc80e759ddc61f560f55ef5e66a8fea1a053abbf7f03fea2ef42032"
+build_start_time: [1692881809, 740285000]
+build_end_time: [1692881809, 825875000]
+inputs:
+  "/Users/mianhaseeb/.pub-cache/hosted/pub.dev/network_info_plus-3.0.5/macos/Classes/NetworkInfoPlusPlugin.swift": !private [1692712684, 24372394]

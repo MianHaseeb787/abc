@@ -33,10 +33,16 @@ class CustomerOrder extends HiveObject {
 
 @HiveType(typeId: 3)
 class OrderItem extends HiveObject {
-  OrderItem({required this.itemName, required this.quantity});
+  OrderItem(
+      {required this.itemName,
+      required this.itemPrice,
+      required this.quantity});
   @HiveField(0)
   late String itemName;
 
   @HiveField(1)
+  late double itemPrice;
+
+  @HiveField(2)
   late int quantity;
 }

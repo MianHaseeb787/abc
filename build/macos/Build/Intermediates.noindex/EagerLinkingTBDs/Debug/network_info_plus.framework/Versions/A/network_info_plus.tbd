@@ -1,0 +1,35 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ arm64-macos ]
+flags:           [ not_app_extension_safe ]
+install-name:    '@rpath/network_info_plus.framework/Versions/A/network_info_plus'
+swift-abi-version: 7
+exports:
+  - targets:         [ arm64-macos ]
+    symbols:         [ '_$s17network_info_plus17withWifiInterface6family4bodyxSgs5Int32V_xSPySo7ifaddrsVGKXEtKlF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvM', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvMTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvg', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvgTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvpMV', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvpWvd', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvpfi', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvs', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC11cwinterfaceSo11CWInterfaceCSgvsTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC14getWifiAddress6familySSSgs5Int32V_tF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC14getWifiAddress6familySSSgs5Int32V_tFTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC14getWifiSubmaskSSSgyF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC14getWifiSubmaskSSSgyFTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC16getWifiBroadcastSSSgyF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC16getWifiBroadcastSSSgyFTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC17getDefaultGatewaySSSgyF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC17getDefaultGatewaySSSgyFTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC6handle_6resultySo17FlutterMethodCallC_yypSgctF', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC6handle_6resultySo17FlutterMethodCallC_yypSgctFTq', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginC8register4withySo07FlutterG9Registrar_p_tFZ', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginCACycfC', '_$s17network_info_plus21NetworkInfoPlusPluginCACycfc', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginCMa', '_$s17network_info_plus21NetworkInfoPlusPluginCMn', 
+                       '_$s17network_info_plus21NetworkInfoPlusPluginCN', '_$s17network_info_plus21NetworkInfoPlusPluginCfD', 
+                       _network_info_plusVersionNumber, _network_info_plusVersionString ]
+    objc-classes:    [ PodsDummy_network_info_plus, _TtC17network_info_plus21NetworkInfoPlusPlugin ]
+...

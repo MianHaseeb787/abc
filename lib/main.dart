@@ -43,6 +43,6 @@ void main() async {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(brightness: Brightness.dark),
-    home: HomeScreen(),
+    home: const HomeScreen(),
   ));
 }

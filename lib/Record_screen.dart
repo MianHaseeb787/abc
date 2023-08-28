@@ -80,11 +80,13 @@ class _RecordScreenState extends State<RecordScreen> {
                           DataTable(
                             columns: [
                               DataColumn(label: Text('Item Name')),
+                              DataColumn(label: Text('Item Price')),
                               DataColumn(label: Text('Quantity')),
                             ],
                             rows: order!.orderItems.map((orderItem) {
                               return DataRow(cells: [
                                 DataCell(Text(orderItem.itemName)),
+                                DataCell(Text(orderItem.itemPrice.toString())),
                                 DataCell(Text(orderItem.quantity.toString())),
                               ]);
                             }).toList(),

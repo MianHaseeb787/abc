@@ -34,9 +34,10 @@ class _SalesScreenState extends State<SalesScreen> {
   final List<double> AMTList = [];
   final List<OrderItem> orderItemList = [];
 
-  final List<double> totalAmountList = [];
+  final List<double> totalAmountWTList = [];
   final List<double> vatList = [];
 
+  double totalAmountWT = 0;
   double totalAmount = 0;
   double vat = 0;
 
@@ -45,18 +46,25 @@ class _SalesScreenState extends State<SalesScreen> {
     // TODO: implement initState
     super.initState();
     // getData();
-    print(totalAmount);
+    print(totalAmountWT);
   }
 
   void getData() {
+    totalAmountWT = 0;
     totalAmount = 0;
     vat = 0;
-    for (int i = 0; i < totalAmountList.length; i++) {
-      totalAmount = totalAmount + totalAmountList[i];
-      vat += vatList[i];
+    // vat = 0;
+    for (int i = 0; i < totalAmountWTList.length; i++) {
+      totalAmountWT = totalAmountWT + totalAmountWTList[i];
+      totalAmount = (totalAmountWT) / (1 + 0.05);
+      vat = totalAmountWT - totalAmount;
+
+      print('total amount $totalAmount');
+      print('total amount with tax $totalAmountWT');
+      print('Vat $vat');
     }
 
-    print(totalAmountList);
+    print("TT $totalAmountWTList");
   }
 
   void addToBill(Menu selectedItem) {
@@ -65,47 +73,54 @@ class _SalesScreenState extends State<SalesScreen> {
     eachitempriceList.add(selectedItem.price!);
 
     final double itemPrice = selectedItem.price! * 1;
-    final double amt =
-        ((selectedItem.price! * 1) * 0.05) + (1 * selectedItem.price!);
-    final double eachTax = ((selectedItem.price! * 1) * 0.05);
+    // final double amt =
+    // ((selectedItem.price! * 1) * 0.05) + (1 * selectedItem.price!);
+    // final double eachTax = ((selectedItem.price! * 1) * 0.05);
 
-    print("total amount$totalAmount");
+    // print("total amount$totalAmount");
 
-    totalAmountList.add(itemPrice);
-    vatList.add(eachTax);
+    totalAmountWTList.add(itemPrice);
+    // vatList.add(eachTax);
 
-    AMTList.add(amt);
+    // AMTList.add(amt);
     quantityControllerList.add(TextEditingController(text: '1'));
-    priceControllerList
-        .add(TextEditingController(text: selectedItem.price.toString()));
+    priceControllerList.add(
+        TextEditingController(text: selectedItem.price!.toStringAsFixed(2)));
     getData();
 
-    print("total amount$totalAmount");
+    // print("total amount$totalAmount");
+    print(AMTList);
 
     setState(() {});
   }
 
   void updateBill(int index, int quantity, double price) {
-    print(index);
-    print(price);
+    // print(index);
+    // print("price $price");
     quantityList[index] = quantity;
-    print(quantityList[index]);
+    // print(quantityList[index]);
 
     final double itemPrice = price * quantity;
-    print(itemPrice);
+    print("this is item price $itemPrice");
 
-    final double amt = ((price * quantity) * 0.05) + (quantity * price);
-    AMTList[index] = amt;
+    eachitempriceList[index] = price;
+    print("each item list$eachitempriceList");
 
-    final double eachTax = ((price * quantity) * 0.05);
+    // final double amt = ((price * 1) * 0.05) + (1 * price);
 
-    totalAmountList[index] = itemPrice;
-    print("total amount$totalAmount");
+    // AMTList[index] = amt;
 
-    vatList[index] = eachTax;
+    // final double eachTax = ((price * quantity) * 0.05);
+
+    totalAmountWTList[index] = itemPrice;
+    // print('totamount list $totalAmountList');
+    // print("total amount$totalAmount");
+
+    // vatList[index] = eachTax;
+    // print('vat list : $vatList');
 
     getData();
-    print("total amount$totalAmount");
+    // print("total amount$totalAmount");
 
     setState(() {});
   }
@@ -114,8 +129,9 @@ class _SalesScreenState extends State<SalesScreen> {
     quantityList.removeAt(index);
     selectedItems.removeAt(index);
     AMTList.removeAt(index);
-    totalAmountList.removeAt(index);
+    totalAmountWTList.removeAt(index);
     vatList.removeAt(index);
+    eachitempriceList.removeAt(index);
 
     getData();
     setState(() {});
@@ -124,7 +140,9 @@ class _SalesScreenState extends State<SalesScreen> {
   void saveOrderdetail() {
     for (int i = 0; i < selectedItems.length; i++) {
       orderItemList.add(OrderItem(
-          itemName: selectedItems[i].name!, quantity: quantityList[i]));
+          itemName: selectedItems[i].name!,
+          itemPrice: eachitempriceList[i],
+          quantity: quantityList[i]));
     }
 
     boxOrders.put(
@@ -133,8 +151,8 @@ class _SalesScreenState extends State<SalesScreen> {
             customerName: '',
             VAT: vat,
             orderItems: orderItemList,
-            totalAmount: totalAmount,
-            totalWithTax: (totalAmount + vat),
+            totalAmount: totalAmountWT,
+            totalWithTax: (totalAmountWT + vat),
             orderDate: DateTime.now()));
 
     print('added to cache');
@@ -166,7 +184,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         width: double.infinity,
                         // height: double.infinity,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 62, 62, 62),
+                          color: Color.fromARGB(255, 240, 240, 240),
                           border: Border.all(
                             color: Color.fromARGB(
                                 255, 255, 255, 255), // Border color
@@ -177,6 +195,9 @@ class _SalesScreenState extends State<SalesScreen> {
                           children: [
                             Expanded(
                               child: ListView.builder(
+                                  itemExtent: 120,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 0),
                                   // gridDelegate:
                                   //     SliverGridDelegateWithFixedCrossAxisCount(
                                   //         crossAxisCount:
@@ -211,24 +232,35 @@ class _SalesScreenState extends State<SalesScreen> {
                                       },
                                       child: Card(
                                         elevation:
-                                            4, // Adjust the elevation (shadow) of the Card
+                                            10, // Adjust the elevation (shadow) of the Card
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
                                           children: [
-                                            SizedBox(
-                                                width: 120,
-                                                height: 70,
-                                                child: Image.file(
-                                                  File(cat!.img!),
-                                                  fit: BoxFit.cover,
-                                                )),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 20),
-                                              child: Text(
-                                                cat.name!,
-                                                textAlign: TextAlign.start,
+                                            Expanded(
+                                              flex: 1,
+                                              child: Image.file(File(cat!.img!),
+                                                  fit: BoxFit.cover),
+                                            ),
+                                            // SizedBox(
+                                            //   width: 5,
+                                            // ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(18.0),
+                                                child: Text(
+                                                  cat.name!,
+                                                  textAlign: TextAlign.start,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    // fontWeight:
+                                                    //     FontWeight.bold
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -257,7 +289,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         padding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 106, 106, 106),
+                          color: Color.fromARGB(255, 174, 174, 174),
                           border: Border.all(
                             color: Color.fromARGB(
                                 255, 255, 255, 255), // Border color
@@ -333,7 +365,7 @@ class _SalesScreenState extends State<SalesScreen> {
                   ),
                   Expanded(
                     child: Container(
-                      color: Color.fromARGB(255, 62, 62, 62),
+                      color: Color.fromARGB(255, 255, 255, 255),
                       child: Row(
                         children: [
                           // selected items screen
@@ -342,7 +374,7 @@ class _SalesScreenState extends State<SalesScreen> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 10),
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 62, 62, 62),
+                                color: Color.fromARGB(255, 149, 149, 149),
                                 border: Border.all(
                                   color: Color.fromARGB(
                                       255, 255, 255, 255), // Border color
@@ -387,6 +419,9 @@ class _SalesScreenState extends State<SalesScreen> {
                                       )),
                                     ],
                                   ),
+                                  Divider(
+                                    thickness: 2,
+                                  ),
                                   Expanded(
                                     child: ListView.builder(
                                       itemCount: selectedItems.length,
@@ -404,7 +439,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                index.toString(),
+                                                (index + 1).toString(),
                                                 textAlign: TextAlign.start,
                                               ),
                                               SizedBox(
@@ -499,7 +534,7 @@ class _SalesScreenState extends State<SalesScreen> {
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 62, 62, 62),
+                                color: Color.fromARGB(255, 149, 149, 149),
                                 border: Border.all(
                                   color: Color.fromARGB(
                                       255, 255, 255, 255), // Border color
@@ -523,13 +558,16 @@ class _SalesScreenState extends State<SalesScreen> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 20,
+                                                // color: Colors.black
                                               ),
                                             ),
                                             Text(
-                                              totalAmount.toStringAsFixed(2),
+                                              ((totalAmountWT) / (1 + 0.05))
+                                                  .toStringAsFixed(2),
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 25,
+                                                // color: Colors.black
                                               ),
                                             ),
                                             SizedBox(
@@ -540,13 +578,18 @@ class _SalesScreenState extends State<SalesScreen> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 20,
+                                                // color: Colors.black
                                               ),
                                             ),
                                             Text(
-                                              vat.toStringAsFixed(2),
+                                              (totalAmountWT -
+                                                      ((totalAmountWT) /
+                                                          (1 + 0.05)))
+                                                  .toStringAsFixed(2),
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 25,
+                                                // color: Colors.black
                                               ),
                                             ),
                                           ],
@@ -557,18 +600,20 @@ class _SalesScreenState extends State<SalesScreen> {
                                               MainAxisAlignment.end,
                                           children: [
                                             Text(
-                                              'Total with tax :   ',
+                                              'Total with Tax :   ',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.normal,
                                                 fontSize: 20,
+                                                // color: Colors.black
                                               ),
                                             ),
                                             Text(
-                                              (totalAmount + vat)
+                                              (totalAmountWT)
                                                   .toStringAsFixed(2),
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 25,
+                                                // color: Colors.black
                                               ),
                                             ),
                                           ],
@@ -577,6 +622,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                           padding: const EdgeInsets.all(20.0),
                                           child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.black,
                                                   fixedSize: Size(150, 30)),
                                               onPressed: () {
                                                 saveOrderdetail();
@@ -585,7 +631,19 @@ class _SalesScreenState extends State<SalesScreen> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           PrintingScreen(
-                                                              selectedItems)),
+                                                              eachItemPriceList:
+                                                                  eachitempriceList,
+                                                              vatList: vatList,
+                                                              totalAmountList:
+                                                                  totalAmountWTList,
+                                                              selecteditems:
+                                                                  selectedItems,
+                                                              amtList: AMTList,
+                                                              quantityList:
+                                                                  quantityList,
+                                                              totalAmountWT:
+                                                                  totalAmountWT,
+                                                              vat: vat)),
                                                 );
                                               },
                                               child: Row(

@@ -34,15 +34,15 @@ class _MenuScreenState extends State<MenuScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
-  TextEditingController imgController = TextEditingController();
+  // TextEditingController imgController = TextEditingController();
 
   TextEditingController upnameController = TextEditingController();
   TextEditingController uppriceController = TextEditingController();
   TextEditingController upcategoryController = TextEditingController();
-  TextEditingController upimgController = TextEditingController();
+  // TextEditingController upimgController = TextEditingController();
 
   TextEditingController catNameController = TextEditingController();
-  TextEditingController catImgController = TextEditingController();
+  // TextEditingController catImgController = TextEditingController();
 
   @override
   void initState() {
@@ -80,258 +80,332 @@ class _MenuScreenState extends State<MenuScreen> {
   String? selectedCat;
   String? selectedSize = 'N';
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog(Function() updateMenuState) async {
+    // Function updateMenu()
+    String? imagePath;
+    String? baseName;
+
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add new Menu item'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(hintText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Add new Menu item'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(hintText: 'Name'),
+                    ),
+                    TextField(
+                      controller: priceController,
+                      decoration: InputDecoration(hintText: 'Price'),
+                    ),
+                    DropdownButton(
+                      hint: Text('Category'),
+                      isExpanded: true,
+                      items: list.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      value: selectedCat,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCat = newValue;
+                          print(selectedCat);
+                        });
+                      },
+                    ),
+                    DropdownButton<String>(
+                      hint: Text('Size'),
+                      value: selectedSize,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedSize = newValue!;
+                        });
+                      },
+                      items: sizeList.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        imagePath = await pickAndSaveImage();
+                        baseName = path.basename(imagePath!);
+                        setState(() {
+                          // Update imagePath and baseName
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.image_rounded,
+                              color: baseName != null
+                                  ? Colors.greenAccent
+                                  : Colors.redAccent),
+                          SizedBox(width: 10),
+                          Text(imagePath != null ? baseName! : 'Browse Image'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: priceController,
-                  decoration: InputDecoration(hintText: 'Price'),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
-                DropdownButton(
-                  hint: Text('Category'),
-                  isExpanded: true,
-                  items: list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  value: selectedCat,
-                  onChanged: (String? newValue) {
+                TextButton(
+                  child: const Text('Save'),
+                  onPressed: () {
                     setState(() {
-                      selectedCat = newValue;
-                      print(selectedCat);
-                    });
-                  },
-                ),
-                DropdownButton<String>(
-                  hint: Text('Size'),
-                  value: selectedSize,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedSize = newValue!;
-                    });
-                  },
-                  items: sizeList.map((String option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
-                ),
-                TextField(
-                  onTap: () async {
-                    final imagePath = await pickAndSaveImage();
-                    imgController.text = imagePath!;
-                  },
-                  controller: imgController,
-                  decoration: InputDecoration(
-                    hintText: 'Browse Image',
-                    prefixIcon:
-                        Icon(Icons.image_rounded), // Add the leading icon here
-                  ),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                setState(() {
-                  boxMenus.put(
-                      'key_${nameController.text}',
-                      Menu(
+                      boxMenus.put(
+                        'key_${nameController.text}',
+                        Menu(
                           name: nameController.text,
                           price: double.parse(priceController.text),
                           category: selectedCat,
                           size: selectedSize,
-                          img: imgController.text));
-                });
+                          img: imagePath,
+                        ),
+                      );
+                    });
 
-                nameController.clear();
-                priceController.clear();
-                categoryController.clear();
-                imgController.clear();
+                    nameController.clear();
+                    priceController.clear();
+                    categoryController.clear();
+                    // imgController.clear();
 
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                    Navigator.of(context).pop();
+
+                    updateMenuState();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Future<void> updateMenu(int index) async {
+  Future<void> updateMenu(int index, Function() updateMenuState) async {
+    String? imagePath;
+    String? baseName;
+    String? size;
+
     String upCat = '';
     toUpdateMenu = boxMenus.getAt(index);
     print(toUpdateMenu?.name);
 
     upnameController.text = toUpdateMenu?.name ?? '';
     uppriceController.text = toUpdateMenu?.price.toString() ?? '';
-    upimgController.text = toUpdateMenu?.img ?? '';
+    // upimgController.text = toUpdateMenu?.img ?? '';
+    imagePath = toUpdateMenu?.img ?? '';
+    size = toUpdateMenu!.size ?? '';
+
+    baseName = path.basename(imagePath);
+
     // upcategoryController.
     upCat = toUpdateMenu?.category ?? '';
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Update Menu item'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: upnameController,
-                  decoration: InputDecoration(hintText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Update Menu item'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      controller: upnameController,
+                      decoration: InputDecoration(hintText: 'Name'),
+                    ),
+                    TextField(
+                      controller: uppriceController,
+                      decoration: InputDecoration(hintText: 'Price'),
+                    ),
+                    DropdownButton(
+                      hint: Text('Category'),
+                      isExpanded: true,
+                      items: list.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      value: upCat,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          upCat = newValue!;
+                          print("selectedCat$selectedCat");
+                          print('upcat$upCat');
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () async {
+                        imagePath = await pickAndSaveImage();
+                        baseName = path.basename(imagePath!);
+                        setState(() {
+                          // Update imagePath and baseName
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.image_rounded,
+                              color: baseName != null
+                                  ? Colors.greenAccent
+                                  : Colors.redAccent),
+                          SizedBox(width: 10),
+                          Text(imagePath != null ? baseName! : 'Browse Image'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: uppriceController,
-                  decoration: InputDecoration(hintText: 'Price'),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
-                DropdownButton(
-                  hint: Text('Category'),
-                  isExpanded: true,
-                  items: list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  value: upCat,
-                  onChanged: (String? newValue) {
+                TextButton(
+                  child: const Text('Update'),
+                  onPressed: () {
                     setState(() {
-                      upCat = newValue!;
-                      print("selectedCat$selectedCat");
-                      print('upcat$upCat');
-                    });
-                  },
-                ),
-                TextField(
-                  onTap: () async {
-                    final imagePath = await pickAndSaveImage();
-                    upimgController.text = imagePath!;
-                  },
-                  controller: upimgController,
-                  decoration: InputDecoration(
-                    hintText: 'Browse Image',
-                    prefixIcon:
-                        Icon(Icons.image_rounded), // Add the leading icon here
-                  ),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Update'),
-              onPressed: () {
-                setState(() {
-                  boxMenus.putAt(
-                      index,
-                      Menu(
+                      boxMenus.putAt(
+                        index,
+                        Menu(
                           name: upnameController.text,
                           price: double.parse(uppriceController.text),
+                          size: size,
                           category: upCat,
-                          img: upimgController.text));
-                });
+                          img: imagePath,
+                        ),
+                      );
+                    });
 
-                upnameController.clear();
-                uppriceController.clear();
-                upcategoryController.clear();
-                upimgController.clear();
+                    upnameController.clear();
+                    uppriceController.clear();
+                    upcategoryController.clear();
+                    // upimgController.clear();
 
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+                    Navigator.of(context).pop();
+                    updateMenuState();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
   Future<void> _showCatDialog() async {
+    String? imagePath;
+    String? baseName;
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add new Category'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: catNameController,
-                  decoration: InputDecoration(hintText: 'Name'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Add new Category'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    TextField(
+                      controller: catNameController,
+                      decoration: InputDecoration(hintText: 'Name'),
+                    ),
+                    // TextField(
+                    //   onTap: () async {
+                    //     imagePath = await pickAndSaveImage();
+                    //     final baseName = path.basename(imagePath!);
+                    //     setState(() {
+                    //       imagePath = imagePath;
+                    //     });
+                    //   },
+                    //   controller: catImgController,
+                    //   decoration: InputDecoration(
+                    //     hintText: 'Browse Image',
+                    //     prefixIcon: Icon(Icons.image_rounded),
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        imagePath = await pickAndSaveImage();
+                        baseName = path.basename(imagePath!);
+                        setState(() {
+                          // imagePath = imagePath;
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.image_rounded,
+                              color: baseName != null
+                                  ? Colors.greenAccent
+                                  : Colors.redAccent),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(imagePath != null ? baseName! : 'Browse Image'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                TextField(
-                  onTap: () async {
-                    final imagePath = await pickAndSaveImage();
-                    catImgController.text = imagePath!;
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
-                  controller: catImgController,
-                  decoration: InputDecoration(
-                    hintText: 'Browse Image',
-                    prefixIcon:
-                        Icon(Icons.image_rounded), // Add the leading icon here
-                  ),
-                )
+                ),
+                TextButton(
+                  child: const Text('Save'),
+                  onPressed: () {
+                    setState(() {
+                      boxCategorys.put(
+                          'key_${catNameController.text}',
+                          MenuCategory(
+                              name: catNameController.text, img: imagePath));
+                    });
+
+                    print('Category added');
+
+                    catNameController.clear();
+                    // catImgController.clear();
+
+                    Navigator.of(context).pop();
+                  },
+                ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                setState(() {
-                  boxCategorys.put(
-                      'key_${catNameController}',
-                      MenuCategory(
-                          name: catNameController.text,
-                          img: catImgController.text));
-                });
-
-                print('category added');
-
-                nameController.clear();
-
-                imgController.clear();
-
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -388,6 +462,11 @@ class _MenuScreenState extends State<MenuScreen> {
     return null;
   }
 
+  void updateMenuState() {
+    setState(() {});
+    // return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -433,7 +512,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     onLongPress: () {
                       print(index);
                       // print(toUpdateMenu?.name);
-                      updateMenu(index);
+                      updateMenu(index, updateMenuState);
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -489,7 +568,7 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showMyDialog();
+          _showMyDialog(updateMenuState);
         },
         backgroundColor: Color.fromARGB(255, 0, 115, 255),
         child: Icon(Icons.add),
